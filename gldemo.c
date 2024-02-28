@@ -106,7 +106,7 @@ int main()
 
         gl_context_begin();
 
-        glClearColor(environment_color[0], environment_color[1], environment_color[2], environment_color[3]);
+        glClearColor(0.12f, 0.0f, 0.06f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Camera
