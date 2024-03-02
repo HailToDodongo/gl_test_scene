@@ -35,6 +35,7 @@ int main()
 
     sprite_t *sprite = sprite_load("rom:/unit1m.i8.sprite");
     sprite_t *spriteFont = sprite_load("rom:/font.ia4.sprite");
+    sprite_t *spriteLogo = sprite_load("rom:/logo.ia8.sprite");
     model64_t *model = model64_load("rom:/scene.model64");
 
     glMatrixMode(GL_PROJECTION);
@@ -163,6 +164,10 @@ int main()
 
             debug_printf_screen(140, 218, "FPS: %.4f", display_get_fps());
             rspq_profile_dump_screen();
+
+            rdpq_mode_combiner(RDPQ_COMBINER_TEX);
+            rdpq_mode_blender(RDPQ_BLENDER_MULTIPLY);
+            rdpq_sprite_blit(spriteLogo, 24.0f, 206.0f, NULL);
         }
 
         rdpq_detach_show();
