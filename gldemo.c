@@ -23,7 +23,7 @@ int main()
 	debug_init_usblog();
     dfs_init(DFS_DEFAULT_LOCATION);
 
-    display_init(RESOLUTION_320x240, DEPTH_16_BPP, 3, GAMMA_NONE, FILTERS_RESAMPLE);
+    display_init(RESOLUTION_320x240, DEPTH_16_BPP, 3, GAMMA_NONE, FILTERS_RESAMPLE_ANTIALIAS);
 
     rdpq_init();
     gl_init();
@@ -45,7 +45,10 @@ int main()
     glLoadIdentity();
 
     // No Fog
-    glDisable(GL_FOG);
+    glEnable(GL_FOG);
+    glFogf(GL_FOG_START, 3);
+    glFogf(GL_FOG_END, 15);
+    glFogfv(GL_FOG_COLOR, environment_color);
 
     // 1 ambient + 1 directional light
     glLightModelfv(GL_LIGHT_MODEL_AMBIENT, environment_color);
