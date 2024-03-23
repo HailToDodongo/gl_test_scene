@@ -105,7 +105,7 @@ static rspq_profile_data_t profile_data;
 
 void debug_draw_perf_overlay(float measuredFps)
 {
-    if(profile_data.frame_count == 20)return;
+    if(profile_data.frame_count == 0)return;
 
     const float TABLE_POS_X = 104;
     const float TABLE_POS_Y = 12;

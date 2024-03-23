@@ -177,6 +177,11 @@ int main()
 
             rdpq_sprite_upload(TILE0, spriteFont, NULL);
       
+            if(profile_data.frame_count == 0) {
+                debug_printf_screen(140, 206, "FPS (3D)   : %.4f", last3dFPS);
+                debug_printf_screen(140, 218, "FPS (3D+UI): %.4f", display_get_fps());
+            }
+
             debug_draw_perf_overlay(last3dFPS);
 
             rdpq_set_mode_standard();
