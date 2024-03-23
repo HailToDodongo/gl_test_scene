@@ -8,6 +8,7 @@ assets_glb = $(wildcard assets/*.glb)
 assets_conv = $(addprefix filesystem/,$(notdir $(assets_png:%.png=%.sprite)))
 assets_conv += $(addprefix filesystem/,$(notdir $(assets_glb:%.glb=%.model64)))
 
+N64_CFLAGS += -std=gnu2x
 MKSPRITE_FLAGS ?=
 
 all: gldemo.z64

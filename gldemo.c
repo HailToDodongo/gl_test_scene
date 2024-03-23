@@ -16,6 +16,7 @@ static GLfloat light_diffuse[4]    = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 static rspq_profile_data_t profile_data;
 #include "debug_print.h"
+#include "debug_overlay.h"
 
 int main()
 {
@@ -80,19 +81,14 @@ int main()
 
     bool requestDisplayMetrics = false;
     bool displayMetrics = false;
+    float last3dFPS = 0.0f;
+
     uint32_t dpl = 0;
 
     for(int frame = 0;; ++frame)
     {
         joypad_poll();
         joypad_inputs_t inputs = joypad_get_inputs(JOYPAD_PORT_1);
-
-        if(inputs.btn.b) {
-            requestDisplayMetrics = true;
-        } else {
-            requestDisplayMetrics = false;
-            displayMetrics = false;
-        }
 
         // Camera movement
         float x = inputs.stick_x / 128.f;
@@ -109,6 +105,22 @@ int main()
         rdpq_attach(disp, &zbuffer);
 
         gl_context_begin();
+
+        if(inputs.btn.b) {
+            requestDisplayMetrics = true;
+            glFogfv(GL_FOG_COLOR, (float[]){0,0,0,1});
+            glLightModelfv(GL_LIGHT_MODEL_AMBIENT, (float[]){0.25,0.25,0.25,1});
+            glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, (float[]){0,0,0,1});
+            glLightfv(GL_LIGHT0, GL_DIFFUSE, (float[]){0,0,0,1});
+        } else {
+            requestDisplayMetrics = false;
+            displayMetrics = false;
+            glFogfv(GL_FOG_COLOR, environment_color);
+            glLightModelfv(GL_LIGHT_MODEL_AMBIENT, environment_color);
+            glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, mat_diffuse);
+            glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
+        }
+
 
         glClearColor(0.12f, 0.0f, 0.06f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -164,13 +176,14 @@ int main()
             rdpq_mode_alphacompare(1);
 
             rdpq_sprite_upload(TILE0, spriteFont, NULL);
+      
+            debug_draw_perf_overlay(last3dFPS);
 
-            debug_printf_screen(140, 218, "FPS: %.4f", display_get_fps());
-            rspq_profile_dump_screen();
-
+            rdpq_set_mode_standard();
             rdpq_mode_combiner(RDPQ_COMBINER_TEX);
             rdpq_mode_blender(RDPQ_BLENDER_MULTIPLY);
-            rdpq_sprite_blit(spriteLogo, 24.0f, 206.0f, NULL);
+            rdpq_sprite_blit(spriteLogo, 22.0f, 161.0f, NULL);
+            rspq_wait();
         }
 
         rdpq_detach_show();
@@ -181,6 +194,7 @@ int main()
             // we only want to update metrics if the overlay is not visible and vice-versa
             // this prevents noise introduced by the overlay itself
             if(!displayMetrics) {
+                last3dFPS = display_get_fps();
                 rspq_wait();
                 rspq_profile_get_data(&profile_data);
                 if(requestDisplayMetrics)displayMetrics = true;
